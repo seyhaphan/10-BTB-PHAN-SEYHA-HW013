@@ -13,7 +13,8 @@ export default class EditArticle extends Component {
          image: '',
          url: '',
          uploading: false,
-         uploadSuccess: false
+         uploadSuccess: false,
+         progress: 0
       }
       this.id = this.props.match.params.eId;
    }
@@ -64,36 +65,36 @@ export default class EditArticle extends Component {
       if (e.target.files[0]) {
          this.setState({
             image: e.target.files[0],
+         }, () => {
+            this.setState({ uploading: true })
+            const uploadTask = storage.ref(`images/${this.state.image.name}`).put(this.state.image);
+            uploadTask.on(
+               "state_changed",
+               snapshot => {
+                  const progress = Math.round(
+                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                  );
+                  this.setState({ progress })
+               },
+               error => {
+                  console.log(error);
+               },
+               () => {
+                  storage
+                     .ref("images")
+                     .child(this.state.image.name)
+                     .getDownloadURL()
+                     .then(url => {
+                        this.setState({
+                           url,
+                           uploading: false,
+                           uploadSuccess: true
+                        })
+                     });
+               }
+            );
          })
       }
-   }
-   handleUplaod = () => {
-      this.setState({ uploading: true })
-      const uploadTask = storage.ref(`images/${this.state.image.name}`).put(this.state.image);
-      uploadTask.on(
-         "state_changed",
-         snapshot => {
-            const progress = Math.round(
-               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            );
-         },
-         error => {
-            console.log(error);
-         },
-         () => {
-            storage
-               .ref("images")
-               .child(this.state.image.name)
-               .getDownloadURL()
-               .then(url => {
-                  this.setState({
-                     url,
-                     uploading: false,
-                     uploadSuccess: true
-                  })
-               });
-         }
-      );
    }
    render() {
       return (
@@ -138,9 +139,8 @@ export default class EditArticle extends Component {
                      <img className="w-100 h-100" src={this.state.url || "https://iwfstaff.com.au/wp-content/uploads/2017/12/placeholder-image.png"} alt="profile" />
                   </div>
                   <div className="inline-block p-2">
-                     <button className="w-25" onClick={this.handleUplaod}>uplaod</button>
                      {
-                        this.state.uploading ? <span>Uplaoding...</span> : this.state.uploadSuccess ? <span>Completed</span> : ""
+                        this.state.uploading ? <span>Uplaoding...</span> : this.state.uploadSuccess ? <span>Completed {this.state.progress}%</span> : ""
                      }
                   </div>
                </div>
