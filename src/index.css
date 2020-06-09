@@ -36,6 +36,9 @@ thead th:nth-child(2) {
    max-height: 100px;
    overflow: hidden;
 }
+.cell-date {
+   min-width: 100px;
+}
 .pagination {
    margin: 15px auto;
    display: flex;

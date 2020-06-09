@@ -80,6 +80,10 @@ export default class Home extends Component {
                </thead>
                <tbody>
                   {this.state.articles.map(data => {
+                     let date = data.CREATED_DATE
+                     let year = date.slice(0, 4)
+                     let month = date.slice(4, 6)
+                     let day = date.slice(6, 8)
                      return (
                         <tr key={data.ID}>
                            <td>{data.ID}</td>
@@ -93,7 +97,11 @@ export default class Home extends Component {
                                  {data.DESCRIPTION}
                               </div>
                            </td>
-                           <td>{data.CREATED_DATE}</td>
+                           <td>
+                              <div className="cell-date">
+                                 {`${day}-${month}-${year}`}
+                              </div>
+                           </td>
                            <td>
                               <div style={{ width: 100, height: 100 }}>
                                  <img className="w-100 h-100" src={data.IMAGE || "https://iwfstaff.com.au/wp-content/uploads/2017/12/placeholder-image.png"} alt="profile" />
