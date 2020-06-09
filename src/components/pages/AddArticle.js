@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Form, Button, Row, Col } from 'react-bootstrap'
 import Axios from 'axios'
 import { storage } from '../../firebase'
+import swal from 'sweetalert';
 
 export default class AddArticle extends Component {
    constructor() {
@@ -38,7 +39,7 @@ export default class AddArticle extends Component {
          }
          Axios.post("http://110.74.194.124:15011/v1/api/articles", article)
             .then(res => {
-               alert(res.data.MESSAGE)
+               swal("success!", res.data.MESSAGE, "success")
                this.props.history.push("/")
             })
             .catch(err => alert(err))

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Axios from 'axios'
 import PaginationList from './pagination/PaginationList';
 import { Form } from 'react-bootstrap';
+import swal from 'sweetalert';
 
 export default class Home extends Component {
    constructor() {
@@ -34,11 +35,26 @@ export default class Home extends Component {
          })
    }
    onDelete = (id) => {
-      Axios.delete(`http://110.74.194.124:15011/v1/api/articles/${id}`)
-         .then(res => {
-            alert(res.data.MESSAGE)
-            this.loadData();
-         })
+      swal({
+         title: "Are you sure?",
+         text: "Once deleted, you will not be able to recover this imaginary file!",
+         icon: "warning",
+         buttons: true,
+         dangerMode: true,
+      })
+         .then((willDelete) => {
+            if (willDelete) {
+               Axios.delete(`http://110.74.194.124:15011/v1/api/articles/${id}`)
+                  .then(res => {
+                     swal(res.data.MESSAGE, {
+                        icon: "success",
+                     });
+                     this.loadData();
+                  })
+
+            }
+         });
+
    }
    componentWillMount() {
       this.loadData();
