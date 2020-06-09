@@ -8,6 +8,7 @@ export default class EditArticle extends Component {
    constructor(props) {
       super(props)
       this.state = {
+         loading: true,
          title: '',
          description: '',
          error: '',
@@ -33,20 +34,22 @@ export default class EditArticle extends Component {
             error: " * Title can't be blank"
          })
       } else {
-         const article = {
-            TITLE: this.state.title,
-            DESCRIPTION: this.state.description,
-            IMAGE: this.state.url
+         if (!this.state.loading) {
+            const article = {
+               TITLE: this.state.title,
+               DESCRIPTION: this.state.description,
+               IMAGE: this.state.url
+            }
+            Axios.put(`http://110.74.194.124:15011/v1/api/articles/${this.id}`, article)
+               .then(res => {
+                  swal("success!", res.data.MESSAGE, "success")
+                     .then(() => {
+                        this.props.history.push("/")
+                     })
+                  this.props.history.push("/")
+               })
+               .catch(err => alert(err))
          }
-         Axios.put(`http://110.74.194.124:15011/v1/api/articles/${this.id}`, article)
-            .then(res => {
-               swal("success!", res.data.MESSAGE, "success")
-                  .then(() => {
-                     this.props.history.push("/")
-                  })
-               this.props.history.push("/")
-            })
-            .catch(err => alert(err))
       }
    }
    laodData = () => {
@@ -101,6 +104,7 @@ export default class EditArticle extends Component {
       }
    }
    render() {
+      if (this.state.loading) return <h1>Loading...</h1>
       return (
          <Row>
             <Col md={8}>
